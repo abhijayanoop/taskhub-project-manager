@@ -76,6 +76,78 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email }).select("+password");
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+    if (!user.isEmailVerified) {
+      const existingVerification = await Verification.findOne({
+        userID: user._id,
+      });
+
+      if (existingVerification && existingVerification.expiresAt > new Date()) {
+        return res.status(400).json({
+          message:
+            "Email not verified. Please check your email for the verification link.",
+        });
+      } else {
+        await Verification.findByIdAndDelete(existingVerification._id);
+
+        const verificationToken = jwt.sign(
+          { userID: user._id, purpose: "email-verification" },
+          process.env.JWT_SECRET,
+          { expiresIn: "1h" }
+        );
+
+        await Verification.create({
+          userId: user._id,
+          token: verificationToken,
+          expiresAt: new Date(Date.now() + 1 * 60 * 60 * 100),
+        });
+
+        const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
+        const emailBody = `<p>Click <a href="${verificationLink}">here</a> to verify your email</p>`;
+        const emailSubject = "Verify your email address";
+
+        const isEmailSent = await sendEmail(email, emailSubject, emailBody);
+
+        if (!isEmailSent) {
+          res.status(500).json({
+            message: "Failed to send verification email",
+          });
+        }
+
+        res.status(201).json({
+          message:
+            "Verification email sent to your email. Please check and verify your account.",
+        });
+      }
+    }
+
+    const isPasswordValid = bcrypt.compare(user.password, password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    const token = jwt.sign(
+      { userId: user._id, purpose: "login" },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    user.lastLogin = new Date();
+    await user.save();
+
+    const userData = user.toObject();
+    delete userData.password;
+
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: userData,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({
