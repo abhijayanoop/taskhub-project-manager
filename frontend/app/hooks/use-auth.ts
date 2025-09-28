@@ -22,3 +22,23 @@ export const useLoginMutation = () => {
     },
   });
 };
+
+export const useForgotPasswordMutation = () => {
+  return useMutation({
+    mutationFn: (data: { email: string }) => {
+      return postData("/auth/reset-password-request", data);
+    },
+  });
+};
+
+export const useResetPasswordMutation = () => {
+  return useMutation({
+    mutationFn: (data: {
+      token: string;
+      password: string;
+      confirmPassword: string;
+    }) => {
+      return postData("/auth/reset-password", data);
+    },
+  });
+};

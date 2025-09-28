@@ -210,4 +210,122 @@ const verifyEmail = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser, verifyEmail };
+const resetPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json("User not found");
+    }
+
+    if (!user.isEmailVerified) {
+      return res.status(400).json("Please verify your email");
+    }
+
+    const existingVerification = await Verification.findOne({
+      userId: user._id,
+    });
+    if (existingVerification && existingVerification.expiresAt > new Date()) {
+      return res
+        .status(500)
+        .json({ message: "Reset password request already sent" });
+    }
+
+    if (existingVerification && existingVerification.expiresAt < new Date()) {
+      await Verification.findByIdAndDelete(existingVerification._id);
+    }
+
+    const resetPasswordToken = jwt.sign(
+      { userId: user._id, purpose: "reset-password" },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    await Verification.create({
+      userId: user._id,
+      token: resetPasswordToken,
+      expiresAt: new Date(Date.now() + 15 * 60 * 1000),
+    });
+
+    const resetPasswordLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetPasswordToken}`;
+    const emailBody = `<p>Click <a href="${resetPasswordLink}">here</a> to reset your password</p>`;
+    const emailSubject = "Reset password link";
+
+    const isEmailSent = await sendEmail(email, emailSubject, emailBody);
+
+    if (!isEmailSent) {
+      res.status(500).json({
+        message: "Failed to send reset password email",
+      });
+    }
+
+    res.status(200).json({
+      message: "Reset password email sent",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+const verifyResetPasswordTokenAndResetPassword = async (req, res) => {
+  try {
+    const { token, newPassword, confirmPassword } = req.body;
+
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    if (!payload) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    const { userId, purpose } = payload;
+    if (purpose !== "reset-password") {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    console.log("userId:", userId, "token:", token);
+    const verificationToken = await Verification.findOne({ userId, token });
+    console.log("verificationToken found:", verificationToken);
+    if (!verificationToken) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    if (verificationToken.expiresAt < new Date()) {
+      return res.status(401).json({ message: "Token expired" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
+
+    const genSalt = await bcrypt.genSalt(10);
+    const password = await bcrypt.hash(newPassword, genSalt);
+
+    user.password = password;
+    await user.save();
+
+    await Verification.findByIdAndDelete(verificationToken._id);
+
+    res.status(200).json({ message: "Password reset successfully" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+export {
+  registerUser,
+  loginUser,
+  verifyEmail,
+  resetPassword,
+  verifyResetPasswordTokenAndResetPassword,
+};

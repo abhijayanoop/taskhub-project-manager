@@ -100,7 +100,7 @@ export default function SignIn() {
                     <div className="flex justify-between">
                       <FormLabel>Password</FormLabel>
                       <Link
-                        to="forgot-password"
+                        to="/forgot-password"
                         className="text-sm text-blue-600"
                       >
                         Forgot password ?
