@@ -24,6 +24,7 @@ import { Textarea } from "../ui/textarea";
 // import { useCreateWorkspace } from "@/hooks/use-workspace";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
+import { useCreateWorkspace } from "@/hooks/use-workspace";
 
 interface CreateWorkspaceProps {
   isCreatingWorkspace: boolean;
@@ -57,22 +58,22 @@ export const CreateWorkspace = ({
     },
   });
   const navigate = useNavigate();
-  //   const { mutate, isPending } = useCreateWorkspace();
+  const { mutate, isPending } = useCreateWorkspace();
 
   const onSubmit = (data: WorkspaceForm) => {
-    // mutate(data, {
-    //   onSuccess: (data: any) => {
-    //     form.reset();
-    //     setIsCreatingWorkspace(false);
-    //     toast.success("Workspace created successfully");
-    //     navigate(`/workspaces/${data._id}`);
-    //   },
-    //   onError: (error: any) => {
-    //     const errorMessage = error.response.data.message;
-    //     toast.error(errorMessage);
-    //     console.log(error);
-    //   },
-    // });
+    mutate(data, {
+      onSuccess: (data: any) => {
+        form.reset();
+        setIsCreatingWorkspace(false);
+        toast.success("Workspace created successfully");
+        navigate(`/workspaces/${data._id}`);
+      },
+      onError: (error: any) => {
+        const errorMessage = error.response.data.message;
+        toast.error(errorMessage);
+        console.log(error);
+      },
+    });
   };
 
   return (
@@ -148,9 +149,8 @@ export const CreateWorkspace = ({
             </div>
 
             <DialogFooter>
-              <Button type="submit">
-                {/* {isPending ? "Creating..." : "Create"} */}
-                Create
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Creating..." : "Create"}
               </Button>
             </DialogFooter>
           </form>

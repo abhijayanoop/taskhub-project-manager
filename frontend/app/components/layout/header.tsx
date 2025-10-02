@@ -13,7 +13,7 @@ import {
 import { Button } from "../ui/button";
 import { Bell, PlusCircle } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Link } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { WorkspaceAvatar } from "../workspace/workspace-avatar";
 
 interface HeaderProps {
@@ -29,7 +29,8 @@ const Header = ({
 }: HeaderProps) => {
   const { user } = useAuth();
 
-  const workspaces = [];
+  const { workspaces } = useLoaderData() as { workspaces: Workspace[] };
+  console.log(workspaces);
 
   return (
     <div className="bg-background sticky top-0 z-40 border-b">
@@ -58,17 +59,17 @@ const Header = ({
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              {/* {workspaces.map((ws) => (
+              {workspaces.map((ws) => (
                 <DropdownMenuItem
                   key={ws._id}
-                  onClick={() => handleOnClick(ws)}
+                  onClick={() => onWorkspaceSelected(ws)}
                 >
                   {ws.color && (
                     <WorkspaceAvatar color={ws.color} name={ws.name} />
                   )}
                   <span className="ml-2">{ws.name}</span>
                 </DropdownMenuItem>
-              ))} */}
+              ))}
             </DropdownMenuGroup>
 
             <DropdownMenuGroup>

@@ -1,11 +1,21 @@
 import Header from "@/components/layout/header";
 import SidebarComponent from "@/components/layout/sidebar-component";
 import { CreateWorkspace } from "@/components/workspace/create-workspace";
+import { fetchData } from "@/lib/fetch-util";
 import { useAuth } from "@/provider/auth-context";
 import type { Workspace } from "@/types";
 import { Loader } from "lucide-react";
 import React, { useState } from "react";
 import { Navigate, Outlet } from "react-router";
+
+export const clientLoader = async () => {
+  try {
+    const [workspaces] = await Promise.all([fetchData("/workspaces")]);
+    return { workspaces };
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 const DashboardLayout = () => {
   const { user, isAuthenticated, isLoading } = useAuth();
