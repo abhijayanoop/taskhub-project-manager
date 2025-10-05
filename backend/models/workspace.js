@@ -34,7 +34,7 @@ const workspaceModel = new Schema(
         },
       },
     ],
-    projects: { type: Schema.Types.ObjectId, ref: "Project" },
+    projects: [{ type: Schema.Types.ObjectId, ref: "Project" }],
   },
   { timestamps: true }
 );
