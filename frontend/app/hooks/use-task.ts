@@ -35,3 +35,31 @@ export const useUpdateTaskTitleMutation = () => {
     },
   });
 };
+
+export const useUpdateTaskStatusMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { taskId: string; status: string }) =>
+      updateData(`/tasks/${data.taskId}/status`, { status: data.status }),
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({
+        queryKey: ["task", data._id],
+      });
+    },
+  });
+};
+
+export const useUpdateTaskDescriptionMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { taskId: string; description: string }) =>
+      updateData(`/tasks/${data.taskId}/description`, {
+        title: data.description,
+      }),
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({
+        queryKey: ["task", data._id],
+      });
+    },
+  });
+};

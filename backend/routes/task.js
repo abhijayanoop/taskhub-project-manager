@@ -6,6 +6,7 @@ import {
   createTask,
   getTaskById,
   updateTaskDescription,
+  updateTaskStatus,
   updateTaskTitle,
 } from "../controllers/task.js";
 import { taskSchema } from "../libs/validate-schema.js";
@@ -32,6 +33,16 @@ router.put(
     body: z.object({ title: z.string() }),
   }),
   updateTaskTitle
+);
+
+router.put(
+  "/:taskId/status",
+  authMiddleware,
+  validateRequest({
+    params: z.object({ taskId: z.string() }),
+    body: z.object({ status: z.string() }),
+  }),
+  updateTaskStatus
 );
 
 router.put(

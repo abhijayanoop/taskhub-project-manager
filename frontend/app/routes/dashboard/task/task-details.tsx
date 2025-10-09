@@ -1,11 +1,13 @@
 import { BackButton } from "@/components/back-button";
 import { Loader } from "@/components/Loader";
+import { TaskStatusSelector } from "@/components/task/task-status-selector";
 import { TaskTitle } from "@/components/task/task-title";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useTaskByIdQuery } from "@/hooks/use-task";
 import { useAuth } from "@/provider/auth-context";
 import type { Project, Task } from "@/types";
+import { formatDistanceToNow } from "date-fns";
 import { Eye, EyeOff } from "lucide-react";
 import React from "react";
 import { useNavigate, useParams } from "react-router";
@@ -121,15 +123,15 @@ const TaskDetails = () => {
                 <TaskTitle title={task.title} taskId={task._id} />
 
                 <div className="text-sm md:text-base text-muted-foreground">
-                  Created at:{" "}
-                  {/* {formatDistanceToNow(new Date(task.createdAt), {
+                  Created:{" "}
+                  {formatDistanceToNow(new Date(task.createdAt), {
                     addSuffix: true,
-                  })} */}
+                  })}
                 </div>
               </div>
 
               <div className="flex items-center gap-2 mt-4 md:mt-0">
-                {/* <TaskStatusSelector status={task.status} taskId={task._id} /> */}
+                <TaskStatusSelector status={task.status} taskId={task._id} />
 
                 <Button
                   variant={"destructive"}
@@ -168,11 +170,11 @@ const TaskDetails = () => {
         </div>
 
         {/* right side */}
-        <div className="w-full">
-          {/* <Watchers watchers={task.watchers || []} />
+        {/* <div className="w-full"> */}
+        {/* <Watchers watchers={task.watchers || []} />
 
           <TaskActivity resourceId={task._id} /> */}
-        </div>
+        {/* </div> */}
       </div>
     </div>
   );
