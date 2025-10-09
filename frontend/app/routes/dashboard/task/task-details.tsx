@@ -1,5 +1,6 @@
 import { BackButton } from "@/components/back-button";
 import { Loader } from "@/components/Loader";
+import { TaskDescription } from "@/components/task/task-description";
 import { TaskStatusSelector } from "@/components/task/task-status-selector";
 import { TaskTitle } from "@/components/task/task-title";
 import { Badge } from "@/components/ui/badge";
@@ -149,10 +150,10 @@ const TaskDetails = () => {
                 Description
               </h3>
 
-              {/* <TaskDescription
+              <TaskDescription
                 description={task.description || ""}
                 taskId={task._id}
-              /> */}
+              />
             </div>
 
             {/* <TaskAssigneesSelector

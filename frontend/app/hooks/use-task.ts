@@ -54,7 +54,7 @@ export const useUpdateTaskDescriptionMutation = () => {
   return useMutation({
     mutationFn: (data: { taskId: string; description: string }) =>
       updateData(`/tasks/${data.taskId}/description`, {
-        title: data.description,
+        description: data.description,
       }),
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({
