@@ -1,5 +1,6 @@
 import { BackButton } from "@/components/back-button";
 import { Loader } from "@/components/Loader";
+import { CommentSection } from "@/components/task/comment-section";
 import { SubTasksDetails } from "@/components/task/subtask-details";
 import { TaskActivity } from "@/components/task/task-activity";
 import { TaskAssigneesSelector } from "@/components/task/task-assignees-selector";
@@ -108,7 +109,7 @@ const TaskDetails = () => {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <div className="bg-card rounded-lg p-6 shadow-sm mb-6">
             <div className="flex flex-col md:flex-row justify-between items-start mb-4">
@@ -129,7 +130,7 @@ const TaskDetails = () => {
                 <TaskTitle title={task.title} taskId={task._id} />
 
                 <div className="text-sm md:text-base text-muted-foreground">
-                  Created:{" "}
+                  Created at:{" "}
                   {formatDistanceToNow(new Date(task.createdAt), {
                     addSuffix: true,
                   })}
@@ -172,13 +173,12 @@ const TaskDetails = () => {
             <SubTasksDetails subTasks={task.subtasks || []} taskId={task._id} />
           </div>
 
-          {/* <CommentSection taskId={task._id} members={project.members as any} /> */}
+          <CommentSection taskId={task._id} members={project.members as any} />
         </div>
 
         {/* right side */}
-        <div className="w-full">
+        <div className="lg:col-span-1">
           <Watchers watchers={task.watchers || []} />
-
           <TaskActivity resourceId={task._id} />
         </div>
       </div>

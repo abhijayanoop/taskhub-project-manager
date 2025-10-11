@@ -148,3 +148,27 @@ export const useUpdateSubTaskMutation = () => {
     },
   });
 };
+
+export const useAddCommentMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { taskId: string; text: string }) =>
+      postData(`/tasks/${data.taskId}/add-comment`, { text: data.text }),
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({
+        queryKey: ["task", data.task],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["task-activity", data.task],
+      });
+    },
+  });
+};
+
+export const useGetCommentsByTaskIdQuery = (taskId: string) => {
+  return useQuery({
+    queryKey: ["comments", taskId],
+    queryFn: () => fetchData(`/tasks/${taskId}/comments`),
+  });
+};
