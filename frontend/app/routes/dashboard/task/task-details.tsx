@@ -1,5 +1,6 @@
 import { BackButton } from "@/components/back-button";
 import { Loader } from "@/components/Loader";
+import { SubTasksDetails } from "@/components/task/subtask-details";
 import { TaskAssigneesSelector } from "@/components/task/task-assignees-selector";
 import { TaskDescription } from "@/components/task/task-description";
 import { TaskPrioritySelector } from "@/components/task/task-priority-selector";
@@ -166,7 +167,7 @@ const TaskDetails = () => {
 
             <TaskPrioritySelector priority={task.priority} taskId={task._id} />
 
-            {/* <SubTasksDetails subTasks={task.subtasks || []} taskId={task._id} /> */}
+            <SubTasksDetails subTasks={task.subtasks || []} taskId={task._id} />
           </div>
 
           {/* <CommentSection taskId={task._id} members={project.members as any} /> */}

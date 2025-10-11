@@ -3,8 +3,10 @@ import authMiddleware from "../middleware/auth-middleware.js";
 import { validateRequest } from "zod-express-middleware";
 import z from "zod";
 import {
+  addSubTask,
   createTask,
   getTaskById,
+  updateSubTask,
   updateTaskAssignees,
   updateTaskDescription,
   updateTaskPriority,
@@ -25,6 +27,18 @@ router.post(
     body: taskSchema,
   }),
   createTask
+);
+
+router.post(
+  "/:taskId/add-subtask",
+  authMiddleware,
+  validateRequest({
+    params: z.object({
+      taskId: z.string(),
+    }),
+    body: z.object({ title: z.string() }),
+  }),
+  addSubTask
 );
 
 router.put(
@@ -75,6 +89,16 @@ router.put(
     body: z.object({ priority: z.string() }),
   }),
   updateTaskPriority
+);
+
+router.put(
+  "/:taskId/update-subtask/:subTaskId",
+  authMiddleware,
+  validateRequest({
+    params: z.object({ taskId: z.string(), subTaskId: z.string() }),
+    body: z.object({ completed: z.boolean() }),
+  }),
+  updateSubTask
 );
 
 router.get(
