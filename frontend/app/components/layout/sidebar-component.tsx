@@ -108,9 +108,10 @@ const SidebarComponent = ({
           variant={"ghost"}
           size={isCollapsed ? "icon" : "default"}
           onClick={logout}
+          className="w-full justify-center"
         >
-          <LogOut className={cn("size-4", isCollapsed && "mr-2")} />
-          <span className="hidden md:block">Logout</span>
+          <LogOut className="size-4" />
+          {!isCollapsed && <span className="ml-2">Logout</span>}
         </Button>
       </div>
     </div>
