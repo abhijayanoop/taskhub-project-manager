@@ -1,5 +1,6 @@
 import type { CreateTaskFormData } from "@/components/task/create-task-dialog";
 import { fetchData, postData, updateData } from "@/lib/fetch-util";
+import type { TaskPriority } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useCreateTaskMutation = () => {
@@ -61,5 +62,35 @@ export const useUpdateTaskDescriptionMutation = () => {
         queryKey: ["task", data._id],
       });
     },
+  });
+};
+
+export const useUpdateTaskAssigneesMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { taskId: string; assignees: string[] }) =>
+      updateData(`/tasks/${data.taskId}/assignees`, {
+        assignees: data.assignees,
+      }),
+    onSuccess: (data: any) =>
+      queryClient.invalidateQueries({
+        queryKey: ["task", data._id],
+      }),
+  });
+};
+
+export const useUpdateTaskPriorityMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { taskId: string; priority: TaskPriority }) =>
+      updateData(`/tasks/${data.taskId}/priority`, {
+        priority: data.priority,
+      }),
+    onSuccess: (data: any) =>
+      queryClient.invalidateQueries({
+        queryKey: ["task", data._id],
+      }),
   });
 };

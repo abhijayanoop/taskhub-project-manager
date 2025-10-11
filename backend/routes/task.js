@@ -5,7 +5,9 @@ import z from "zod";
 import {
   createTask,
   getTaskById,
+  updateTaskAssignees,
   updateTaskDescription,
+  updateTaskPriority,
   updateTaskStatus,
   updateTaskTitle,
 } from "../controllers/task.js";
@@ -53,6 +55,26 @@ router.put(
     body: z.object({ description: z.string() }),
   }),
   updateTaskDescription
+);
+
+router.put(
+  "/:taskId/assignees",
+  authMiddleware,
+  validateRequest({
+    params: z.object({ taskId: z.string() }),
+    body: z.object({ assignees: z.array(z.string()) }),
+  }),
+  updateTaskAssignees
+);
+
+router.put(
+  "/:taskId/priority",
+  authMiddleware,
+  validateRequest({
+    params: z.object({ taskId: z.string() }),
+    body: z.object({ priority: z.string() }),
+  }),
+  updateTaskPriority
 );
 
 router.get(

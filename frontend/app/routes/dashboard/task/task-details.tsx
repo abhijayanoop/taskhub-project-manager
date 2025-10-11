@@ -1,6 +1,8 @@
 import { BackButton } from "@/components/back-button";
 import { Loader } from "@/components/Loader";
+import { TaskAssigneesSelector } from "@/components/task/task-assignees-selector";
 import { TaskDescription } from "@/components/task/task-description";
+import { TaskPrioritySelector } from "@/components/task/task-priority-selector";
 import { TaskStatusSelector } from "@/components/task/task-status-selector";
 import { TaskTitle } from "@/components/task/task-title";
 import { Badge } from "@/components/ui/badge";
@@ -156,7 +158,7 @@ const TaskDetails = () => {
               />
             </div>
 
-            {/* <TaskAssigneesSelector
+            <TaskAssigneesSelector
               task={task}
               assignees={task.assignees}
               projectMembers={project.members as any}
@@ -164,7 +166,7 @@ const TaskDetails = () => {
 
             <TaskPrioritySelector priority={task.priority} taskId={task._id} />
 
-            <SubTasksDetails subTasks={task.subtasks || []} taskId={task._id} /> */}
+            {/* <SubTasksDetails subTasks={task.subtasks || []} taskId={task._id} /> */}
           </div>
 
           {/* <CommentSection taskId={task._id} members={project.members as any} /> */}

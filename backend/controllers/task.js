@@ -231,3 +231,103 @@ export const updateTaskStatus = async (req, res) => {
     });
   }
 };
+
+export const updateTaskAssignees = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const { assignees } = req.body;
+
+    const task = await Task.findById(taskId);
+
+    if (!task) {
+      return res.status(404).json({
+        message: "Task not found",
+      });
+    }
+
+    const project = await Project.findById(task.project);
+
+    if (!project) {
+      return res.status(404).json({
+        message: "Project not found",
+      });
+    }
+
+    const isMember = project.members.some(
+      (member) => member.user.toString() === req.user._id.toString()
+    );
+
+    if (!isMember) {
+      return res.status(403).json({
+        message: "You are not a member of this project",
+      });
+    }
+
+    const oldAssignees = task.assignees;
+
+    task.assignees = assignees;
+    await task.save();
+
+    // record activity
+    await recordActivity(req.user._id, "updated_task", "Task", taskId, {
+      description: `updated task assignees from ${oldAssignees.length} to ${assignees.length}`,
+    });
+
+    res.status(200).json(task);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+export const updateTaskPriority = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const { priority } = req.body;
+
+    const task = await Task.findById(taskId);
+
+    if (!task) {
+      return res.status(404).json({
+        message: "Task not found",
+      });
+    }
+
+    const project = await Project.findById(task.project);
+
+    if (!project) {
+      return res.status(404).json({
+        message: "Project not found",
+      });
+    }
+
+    const isMember = project.members.some(
+      (member) => member.user.toString() === req.user._id.toString()
+    );
+
+    if (!isMember) {
+      return res.status(403).json({
+        message: "You are not a member of this project",
+      });
+    }
+
+    const oldpriority = task.priority;
+
+    task.priority = priority;
+    await task.save();
+
+    // record activity
+    await recordActivity(req.user._id, "updated_task", "Task", taskId, {
+      description: `updated task priority from ${oldpriority} to ${priority}`,
+    });
+
+    res.status(200).json(task);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
