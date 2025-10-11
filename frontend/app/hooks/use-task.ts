@@ -46,6 +46,9 @@ export const useUpdateTaskStatusMutation = () => {
       queryClient.invalidateQueries({
         queryKey: ["task", data._id],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["task-activity", data._id],
+      });
     },
   });
 };
@@ -61,6 +64,9 @@ export const useUpdateTaskDescriptionMutation = () => {
       queryClient.invalidateQueries({
         queryKey: ["task", data._id],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["task-activity", data._id],
+      });
     },
   });
 };
@@ -73,10 +79,14 @@ export const useUpdateTaskAssigneesMutation = () => {
       updateData(`/tasks/${data.taskId}/assignees`, {
         assignees: data.assignees,
       }),
-    onSuccess: (data: any) =>
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({
         queryKey: ["task", data._id],
-      }),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["task-activity", data._id],
+      });
+    },
   });
 };
 
@@ -88,10 +98,14 @@ export const useUpdateTaskPriorityMutation = () => {
       updateData(`/tasks/${data.taskId}/priority`, {
         priority: data.priority,
       }),
-    onSuccess: (data: any) =>
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({
         queryKey: ["task", data._id],
-      }),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["task-activity", data._id],
+      });
+    },
   });
 };
 
@@ -101,10 +115,14 @@ export const useAddSubTaskMutation = () => {
   return useMutation({
     mutationFn: (data: { title: string; taskId: string }) =>
       postData(`/tasks/${data.taskId}/add-subtask`, { title: data.title }),
-    onSuccess: (data: any) =>
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({
         queryKey: ["task", data._id],
-      }),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["task-activity", data._id],
+      });
+    },
   });
 };
 
@@ -123,6 +141,9 @@ export const useUpdateSubTaskMutation = () => {
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({
         queryKey: ["task", data._id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["task-activity", data._id],
       });
     },
   });

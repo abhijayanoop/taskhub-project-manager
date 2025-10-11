@@ -1,11 +1,13 @@
 import { BackButton } from "@/components/back-button";
 import { Loader } from "@/components/Loader";
 import { SubTasksDetails } from "@/components/task/subtask-details";
+import { TaskActivity } from "@/components/task/task-activity";
 import { TaskAssigneesSelector } from "@/components/task/task-assignees-selector";
 import { TaskDescription } from "@/components/task/task-description";
 import { TaskPrioritySelector } from "@/components/task/task-priority-selector";
 import { TaskStatusSelector } from "@/components/task/task-status-selector";
 import { TaskTitle } from "@/components/task/task-title";
+import { Watchers } from "@/components/task/watchers";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useTaskByIdQuery } from "@/hooks/use-task";
@@ -174,11 +176,11 @@ const TaskDetails = () => {
         </div>
 
         {/* right side */}
-        {/* <div className="w-full"> */}
-        {/* <Watchers watchers={task.watchers || []} />
+        <div className="w-full">
+          <Watchers watchers={task.watchers || []} />
 
-          <TaskActivity resourceId={task._id} /> */}
-        {/* </div> */}
+          <TaskActivity resourceId={task._id} />
+        </div>
       </div>
     </div>
   );

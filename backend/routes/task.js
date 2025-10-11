@@ -5,6 +5,7 @@ import z from "zod";
 import {
   addSubTask,
   createTask,
+  getActivityByResourceId,
   getTaskById,
   updateSubTask,
   updateTaskAssignees,
@@ -106,6 +107,13 @@ router.get(
   authMiddleware,
   validateRequest({ params: z.object({ taskId: z.string() }) }),
   getTaskById
+);
+
+router.get(
+  "/:resourceId/activity",
+  authMiddleware,
+  validateRequest({ params: z.object({ resourceId: z.string() }) }),
+  getActivityByResourceId
 );
 
 export default router;
