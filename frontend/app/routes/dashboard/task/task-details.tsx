@@ -11,13 +11,17 @@ import { TaskTitle } from "@/components/task/task-title";
 import { Watchers } from "@/components/task/watchers";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useTaskByIdQuery } from "@/hooks/use-task";
+import {
+  useArchivedTaskMutation,
+  useTaskByIdQuery,
+  useWatchTaskMutation,
+} from "@/hooks/use-task";
 import { useAuth } from "@/provider/auth-context";
 import type { Project, Task } from "@/types";
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { Eye, EyeOff } from "lucide-react";
-import React from "react";
 import { useNavigate, useParams } from "react-router";
+import { toast } from "sonner";
 
 const TaskDetails = () => {
   const { user } = useAuth();
@@ -35,6 +39,9 @@ const TaskDetails = () => {
     };
     isLoading: boolean;
   };
+  const { mutate: watchTask, isPending: isWatching } = useWatchTaskMutation();
+  const { mutate: achievedTask, isPending: isAchieved } =
+    useArchivedTaskMutation();
 
   if (isLoading) {
     return (
@@ -61,6 +68,34 @@ const TaskDetails = () => {
 
   const members = task?.assignees || [];
 
+  const handleWatchTask = () => {
+    watchTask(
+      { taskId: task._id },
+      {
+        onSuccess: () => {
+          toast.success("Task watched");
+        },
+        onError: () => {
+          toast.error("Failed to watch task");
+        },
+      }
+    );
+  };
+
+  const handleAchievedTask = () => {
+    achievedTask(
+      { taskId: task._id },
+      {
+        onSuccess: () => {
+          toast.success("Task achieved");
+        },
+        onError: () => {
+          toast.error("Failed to achieve task");
+        },
+      }
+    );
+  };
+
   return (
     <div className="container mx-auto p-0 py-4 md:px-4">
       <div className="flex flex-col md:flex-row items-center justify-between mb-6">
@@ -80,9 +115,9 @@ const TaskDetails = () => {
           <Button
             variant={"outline"}
             size="sm"
-            // onClick={handleWatchTask}
+            onClick={handleWatchTask}
             className="w-fit"
-            // disabled={isWatching}
+            disabled={isWatching}
           >
             {isUserWatching ? (
               <>
@@ -100,16 +135,16 @@ const TaskDetails = () => {
           <Button
             variant={"outline"}
             size="sm"
-            // onClick={handleAchievedTask}
+            onClick={handleAchievedTask}
             className="w-fit"
-            // disabled={isAchieved}
+            disabled={isAchieved}
           >
             {task.isArchived ? "Unarchive" : "Archive"}
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="flex flex-col lg:flex-row gap-6">
         <div className="lg:col-span-2">
           <div className="bg-card rounded-lg p-6 shadow-sm mb-6">
             <div className="flex flex-col md:flex-row justify-between items-start mb-4">
@@ -177,8 +212,9 @@ const TaskDetails = () => {
         </div>
 
         {/* right side */}
-        <div className="lg:col-span-1">
+        <div className="w-full">
           <Watchers watchers={task.watchers || []} />
+
           <TaskActivity resourceId={task._id} />
         </div>
       </div>

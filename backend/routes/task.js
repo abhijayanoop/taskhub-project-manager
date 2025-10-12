@@ -5,6 +5,7 @@ import z from "zod";
 import {
   addComment,
   addSubTask,
+  archivedTask,
   createTask,
   getActivityByResourceId,
   getCommentsById,
@@ -15,6 +16,7 @@ import {
   updateTaskPriority,
   updateTaskStatus,
   updateTaskTitle,
+  watchTask,
 } from "../controllers/task.js";
 import { taskSchema } from "../libs/validate-schema.js";
 
@@ -54,6 +56,28 @@ router.post(
     body: z.object({ text: z.string() }),
   }),
   addComment
+);
+
+router.post(
+  "/:taskId/watch",
+  authMiddleware,
+  validateRequest({
+    params: z.object({
+      taskId: z.string(),
+    }),
+  }),
+  watchTask
+);
+
+router.post(
+  "/:taskId/archived",
+  authMiddleware,
+  validateRequest({
+    params: z.object({
+      taskId: z.string(),
+    }),
+  }),
+  archivedTask
 );
 
 router.put(
