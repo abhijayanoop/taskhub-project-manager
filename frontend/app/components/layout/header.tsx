@@ -13,7 +13,7 @@ import {
 import { Button } from "../ui/button";
 import { Bell, PlusCircle } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Link, useLoaderData } from "react-router";
+import { Link, useLoaderData, useLocation, useNavigate } from "react-router";
 import { WorkspaceAvatar } from "../workspace/workspace-avatar";
 
 interface HeaderProps {
@@ -27,10 +27,24 @@ const Header = ({
   selectedWorkspace,
   onCreateWorkspace,
 }: HeaderProps) => {
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const { workspaces } = useLoaderData() as { workspaces: Workspace[] };
-  console.log(workspaces);
+
+  const isOnWorkspacePage = useLocation().pathname.includes("/workspace");
+
+  const handleOnClick = (workspace: Workspace) => {
+    onWorkspaceSelected(workspace);
+    const location = window.location;
+
+    if (isOnWorkspacePage) {
+      navigate(`/workspaces/${workspace._id}`);
+    } else {
+      const basePath = location.pathname;
+      navigate(`${basePath}?workspaceId=${workspace._id}`);
+    }
+  };
 
   return (
     <div className="bg-background sticky top-0 z-40 border-b">
@@ -62,7 +76,7 @@ const Header = ({
               {workspaces.map((ws) => (
                 <DropdownMenuItem
                   key={ws._id}
-                  onClick={() => onWorkspaceSelected(ws)}
+                  onClick={() => handleOnClick(ws)}
                 >
                   {ws.color && (
                     <WorkspaceAvatar color={ws.color} name={ws.name} />
@@ -105,7 +119,7 @@ const Header = ({
                 <Link to="/user/profile">Profile</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => {}}>Log Out</DropdownMenuItem>
+              <DropdownMenuItem onClick={logout}>Log Out</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
