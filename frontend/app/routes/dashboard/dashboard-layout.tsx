@@ -6,7 +6,7 @@ import { useAuth } from "@/provider/auth-context";
 import type { Workspace } from "@/types";
 import { Loader } from "lucide-react";
 import React, { useState } from "react";
-import { Navigate, Outlet } from "react-router";
+import { Navigate, Outlet, useLoaderData } from "react-router";
 
 export const clientLoader = async () => {
   try {
@@ -20,9 +20,11 @@ export const clientLoader = async () => {
 const DashboardLayout = () => {
   const { user, isAuthenticated, isLoading } = useAuth();
 
+  const { workspaces } = useLoaderData() as { workspaces: Workspace[] };
+
   const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
   const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(
-    null
+    workspaces[0]
   );
 
   if (isLoading) {
