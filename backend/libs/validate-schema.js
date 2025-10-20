@@ -36,6 +36,11 @@ const emailSchema = z.object({
   email: z.string().email("Invalid email address"),
 });
 
+const inviteMemberSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  role: z.enum(["member", "admin", "viewer"]),
+});
+
 const workspaceSchema = z.object({
   name: z.string().min(3, "Name should be atleast 3 characters"),
   color: z.string().min(3, "Color should be atleast 3 characters"),
@@ -83,4 +88,5 @@ export {
   workspaceSchema,
   projectSchema,
   taskSchema,
+  inviteMemberSchema,
 };
