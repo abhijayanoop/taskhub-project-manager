@@ -27,3 +27,9 @@ export const useProjectQuery = (projectId: string) => {
     queryFn: () => fetchData(`/projects/${projectId}/tasks`),
   });
 };
+export const useProjectQueryDuplicate = (projectId: string) => {
+  return useQuery({
+    queryKey: ["project", "projectId"],
+    queryFn: () => fetchData(`/projects/${projectId}/tasks`),
+  });
+};
